@@ -1,0 +1,28 @@
+{
+  "placeholderImages": [
+    {
+      "id": "car-commute",
+      "description": "A car on a road, representing a car commute.",
+      "imageUrl": "https://picsum.photos/seed/car-commute/400/200",
+      "imageHint": "car road"
+    },
+    {
+      "id": "bus-commute",
+      "description": "A bus in a city, representing a bus commute.",
+      "imageUrl": "https://picsum.photos/seed/bus-commute/400/200",
+      "imageHint": "bus city"
+    },
+    {
+      "id": "train-commute",
+      "description": "A train on rails, representing a train commute.",
+      "imageUrl": "https://picsum.photos/seed/train-commute/400/200",
+      "imageHint": "train rails"
+    },
+    {
+      "id": "bike-commute",
+      "description": "A bicycle on a path, representing a bike commute.",
+      "imageUrl": "https://picsum.photos/seed/bike-commute/400/200",
+      "imageHint": "bicycle path"
+    }
+  ]
+}
