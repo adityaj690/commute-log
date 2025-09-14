@@ -14,6 +14,7 @@ import { useAuth } from '@/hooks/use-auth';
 import { auth } from '@/lib/firebase';
 import { getCommuteLogs, getCommuteTypes, saveCommuteLog, deleteCommuteLog, saveCommuteTypes } from '@/lib/firestore';
 import { Loader2 } from 'lucide-react';
+import { TooltipProvider, Tooltip, TooltipTrigger, TooltipContent } from '@/components/ui/tooltip';
 
 const initialCommuteTypes: CommuteType[] = [
   { id: '1', name: 'Car', icon: 'Car' },
@@ -106,55 +107,78 @@ export default function DashboardPage() {
   const sortedLogs = logs.sort((a, b) => b.date.getTime() - a.date.getTime());
 
   return (
-    <div className="flex flex-col min-h-screen bg-background">
-      <header className="flex items-center justify-between p-4 border-b bg-card shadow-sm">
-        <h1 className="text-2xl font-bold text-primary font-headline">CommuteLog</h1>
-        <div className="flex items-center gap-2">
-          <Button variant="outline" size="sm" onClick={handleLogout}>
-            <LogOut className="h-4 w-4 mr-2" />
-            Logout
-          </Button>
-          <Button variant="outline" size="sm" onClick={() => setManageTypesOpen(true)}>
-            <Settings className="h-4 w-4 mr-2" />
-            Manage Types
-          </Button>
-          <Button onClick={handleAddLogClick} className="bg-accent hover:bg-accent/90 text-accent-foreground">
-            <PlusCircle className="mr-2 h-4 w-4" />
-            Add Log
-          </Button>
-        </div>
-      </header>
+    <TooltipProvider>
+      <div className="flex flex-col min-h-screen bg-background">
+        <header className="flex items-center justify-between p-4 border-b bg-card shadow-sm">
+          <h1 className="text-xl md:text-2xl font-bold text-primary font-headline">CommuteLog</h1>
+          <div className="flex items-center gap-2">
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button variant="outline" size="icon" className="h-9 w-9" onClick={handleLogout}>
+                  <LogOut className="h-4 w-4" />
+                  <span className="sr-only">Logout</span>
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Logout</p>
+              </TooltipContent>
+            </Tooltip>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button variant="outline" size="icon" className="h-9 w-9" onClick={() => setManageTypesOpen(true)}>
+                  <Settings className="h-4 w-4" />
+                  <span className="sr-only">Manage Types</span>
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Manage Types</p>
+              </TooltipContent>
+            </Tooltip>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button onClick={handleAddLogClick} className="bg-accent hover:bg-accent/90 text-accent-foreground">
+                  <PlusCircle className="h-4 w-4 md:mr-2" />
+                  <span className="hidden md:inline">Add Log</span>
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent className="md:hidden">
+                <p>Add Log</p>
+              </TooltipContent>
+            </Tooltip>
+          </div>
+        </header>
 
-      <main className="flex-1 p-4 md:p-6 grid gap-6 grid-cols-1 lg:grid-cols-3">
-        <div className="lg:col-span-2">
-          <CommuteLogList
-            logs={sortedLogs}
-            commuteTypes={types}
-            onEdit={handleEditLogClick}
-            onDelete={handleDeleteLog}
-          />
-        </div>
+        <main className="flex-1 p-2 md:p-6 grid gap-6 grid-cols-1 lg:grid-cols-3">
+          <div className="lg:col-span-2">
+            <CommuteLogList
+              logs={sortedLogs}
+              commuteTypes={types}
+              onEdit={handleEditLogClick}
+              onDelete={handleDeleteLog}
+            />
+          </div>
 
-        <div className="space-y-6">
-          <CommuteSummary logs={sortedLogs} commuteTypes={types} />
-          <CommutePredictor logs={sortedLogs} commuteTypes={types} />
-        </div>
-      </main>
+          <div className="space-y-6">
+            <CommuteSummary logs={sortedLogs} commuteTypes={types} />
+            <CommutePredictor logs={sortedLogs} commuteTypes={types} />
+          </div>
+        </main>
 
-      <AddEditLogDialog
-        isOpen={isAddEditDialogOpen}
-        onOpenChange={setAddEditDialogOpen}
-        onSave={handleSaveLog}
-        log={editingLog}
-        commuteTypes={types}
-      />
+        <AddEditLogDialog
+          isOpen={isAddEditDialogOpen}
+          onOpenChange={setAddEditDialogOpen}
+          onSave={handleSaveLog}
+          log={editingLog}
+          commuteTypes={types}
+        />
 
-      <ManageTypesDialog
-        isOpen={isManageTypesOpen}
-        onOpenchange={setManageTypesOpen}
-        commuteTypes={types}
-        setCommuteTypes={handleSaveTypes}
-      />
-    </div>
+        <ManageTypesDialog
+          isOpen={isManageTypesOpen}
+          onOpenchange={setManageTypesOpen}
+          commuteTypes={types}
+          setCommuteTypes={handleSaveTypes}
+        />
+      </div>
+    </TooltipProvider>
   );
 }

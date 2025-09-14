@@ -64,10 +64,10 @@ export function CommuteLogList({
             <Card key={log.id} className="overflow-hidden transition-shadow duration-300 ease-in-out hover:shadow-xl">
               <CardContent className="p-4 grid gap-4">
                 <div className="flex justify-between items-start">
-                  <div>
+                  <div className="flex-1 overflow-hidden">
                     <div className="flex items-center text-sm text-muted-foreground">
-                      <Calendar className="mr-2 h-4 w-4" />
-                      <span>
+                      <Calendar className="mr-2 h-4 w-4 flex-shrink-0" />
+                      <span className="truncate">
                         {new Date(log.date).toLocaleDateString(undefined, {
                           weekday: 'long',
                           year: 'numeric',
@@ -76,21 +76,21 @@ export function CommuteLogList({
                         })}
                       </span>
                     </div>
-                    <div className="font-bold text-lg mt-2 flex items-center gap-2">
+                    <div className="font-bold text-base md:text-lg mt-2 flex items-center flex-wrap gap-2">
                       <div className="flex items-center gap-2">
                         <CommuteIcon iconName={goingCommuteType?.icon || 'HelpCircle'} className="h-5 w-5" />
-                        <span>{goingCommuteType?.name || 'Unknown'}</span>
+                        <span className="truncate">{goingCommuteType?.name || 'Unknown'}</span>
                       </div>
-                      <ArrowRight className="h-4 w-4 text-muted-foreground" />
+                      <ArrowRight className="h-4 w-4 text-muted-foreground flex-shrink-0" />
                       <div className="flex items-center gap-2">
                         <CommuteIcon iconName={returnCommuteType?.icon || 'HelpCircle'} className="h-5 w-5" />
-                        <span>{returnCommuteType?.name || 'Unknown'}</span>
+                        <span className="truncate">{returnCommuteType?.name || 'Unknown'}</span>
                       </div>
                     </div>
                   </div>
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                      <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground">
+                      <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground flex-shrink-0 ml-2">
                         <MoreHorizontal className="h-4 w-4" />
                       </Button>
                     </DropdownMenuTrigger>
@@ -110,15 +110,15 @@ export function CommuteLogList({
                   </DropdownMenu>
                 </div>
 
-                <div className="grid grid-cols-2 gap-4 border-t pt-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 border-t pt-4">
                   <div className="flex items-center text-sm text-muted-foreground">
-                    <Clock className="mr-2 h-4 w-4" />
+                    <Clock className="mr-2 h-4 w-4 flex-shrink-0" />
                     <span>
                       Going: <strong>{log.goingDuration} mins</strong>
                     </span>
                   </div>
                   <div className="flex items-center text-sm text-muted-foreground">
-                    <Clock className="mr-2 h-4 w-4" />
+                    <Clock className="mr-2 h-4 w-4 flex-shrink-0" />
                     <span>
                       Return: <strong>{log.returnDuration} mins</strong>
                     </span>
@@ -128,7 +128,7 @@ export function CommuteLogList({
                 {log.notes && (
                   <div className="flex items-start text-sm text-muted-foreground border-t pt-4">
                     <StickyNote className="mr-2 h-4 w-4 flex-shrink-0 mt-0.5" />
-                    <p className="italic">{log.notes}</p>
+                    <p className="italic break-words">{log.notes}</p>
                   </div>
                 )}
               </CardContent>
