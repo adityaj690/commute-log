@@ -4,18 +4,43 @@ import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis } from 'recharts';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
 import type { CommuteLog, CommuteType } from '@/lib/types';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { TrendingUp, Tag } from 'lucide-react';
-import { subDays, isAfter } from 'date-fns';
+import { format, subMonths, startOfMonth, endOfMonth, isWithinInterval } from 'date-fns';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+
+// Helper to generate month options
+const getMonthOptions = () => {
+  const options = [];
+  let date = new Date();
+  for (let i = 0; i < 12; i++) {
+    options.push({
+      value: date.toISOString(),
+      label: format(date, 'MMMM yyyy'),
+    });
+    date = subMonths(date, 1);
+  }
+  return options;
+};
 
 export function CommuteSummary({ logs, commuteTypes }: { logs: CommuteLog[]; commuteTypes: CommuteType[] }) {
+  const [selectedMonth, setSelectedMonth] = useState(new Date().toISOString());
+  const monthOptions = useMemo(() => getMonthOptions(), []);
+
   const summaryData = useMemo(() => {
-    const last30DaysLogs = logs.filter((log) => isAfter(new Date(log.date), subDays(new Date(), 30)));
+    const selectedDate = new Date(selectedMonth);
+    const monthStart = startOfMonth(selectedDate);
+    const monthEnd = endOfMonth(selectedDate);
 
-    const totalTime = last30DaysLogs.reduce((acc, log) => acc + log.goingDuration + log.returnDuration, 0);
-    const avgTime = last30DaysLogs.length > 0 ? totalTime / (last30DaysLogs.length * 2) : 0;
+    const monthlyLogs = logs.filter((log) => {
+      const logDate = new Date(log.date);
+      return isWithinInterval(logDate, { start: monthStart, end: monthEnd });
+    });
 
-    const typeCounts = last30DaysLogs.reduce((acc, log) => {
+    const totalTime = monthlyLogs.reduce((acc, log) => acc + log.goingDuration + log.returnDuration, 0);
+    const avgTime = monthlyLogs.length > 0 ? totalTime / (monthlyLogs.length * 2) : 0;
+
+    const typeCounts = monthlyLogs.reduce((acc, log) => {
       acc[log.goingCommuteTypeId] = (acc[log.goingCommuteTypeId] || 0) + 1;
       acc[log.returnCommuteTypeId] = (acc[log.returnCommuteTypeId] || 0) + 1;
       return acc;
@@ -26,7 +51,7 @@ export function CommuteSummary({ logs, commuteTypes }: { logs: CommuteLog[]; com
 
     const chartData = commuteTypes
       .map((type) => {
-        const count = last30DaysLogs.reduce((sum, log) => {
+        const count = monthlyLogs.reduce((sum, log) => {
           let typeCount = 0;
           if (log.goingCommuteTypeId === type.id) typeCount++;
           if (log.returnCommuteTypeId === type.id) typeCount++;
@@ -40,16 +65,34 @@ export function CommuteSummary({ logs, commuteTypes }: { logs: CommuteLog[]; com
       .filter((d) => d.count > 0);
 
     return { totalTime, avgTime, mostFrequentType, chartData };
-  }, [logs, commuteTypes]);
+  }, [logs, commuteTypes, selectedMonth]);
 
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <TrendingUp className="h-5 w-5 text-primary" />
-          Commute Summary
-        </CardTitle>
-        <CardDescription>Your commute stats for the last 30 days.</CardDescription>
+        <div className="flex justify-between items-start">
+          <div>
+            <CardTitle className="flex items-center gap-2">
+              <TrendingUp className="h-5 w-5 text-primary" />
+              Commute Summary
+            </CardTitle>
+            <CardDescription>
+              Your commute stats for {format(new Date(selectedMonth), 'MMMM yyyy')}.
+            </CardDescription>
+          </div>
+          <Select value={selectedMonth} onValueChange={setSelectedMonth}>
+            <SelectTrigger className="w-[180px]">
+              <SelectValue placeholder="Select month" />
+            </SelectTrigger>
+            <SelectContent>
+              {monthOptions.map((option) => (
+                <SelectItem key={option.value} value={option.value}>
+                  {option.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
       </CardHeader>
       <CardContent className="space-y-6">
         <div className="grid grid-cols-2 gap-4 text-center">
@@ -109,7 +152,7 @@ export function CommuteSummary({ logs, commuteTypes }: { logs: CommuteLog[]; com
             </ChartContainer>
           </div>
         ) : (
-          <p className="text-center text-sm text-muted-foreground pt-4">Not enough data to display chart.</p>
+          <p className="text-center text-sm text-muted-foreground pt-4">No data for this month.</p>
         )}
       </CardContent>
     </Card>
