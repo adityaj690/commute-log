@@ -1,13 +1,19 @@
-'use client';
+"use client";
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
+} from "@/components/ui/dropdown-menu";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -17,12 +23,20 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from '@/components/ui/alert-dialog';
+} from "@/components/ui/alert-dialog";
 
-import { MoreHorizontal, Edit, Trash2, Clock, Calendar, StickyNote, ArrowRight } from 'lucide-react';
-import type { CommuteLog, CommuteType } from '@/lib/types';
-import { useState } from 'react';
-import { CommuteIcon } from '@/components/commute-icon';
+import {
+  MoreHorizontal,
+  Edit,
+  Trash2,
+  Clock,
+  Calendar,
+  StickyNote,
+  ArrowRight,
+} from "lucide-react";
+import type { CommuteLog, CommuteType } from "@/lib/types";
+import { useState } from "react";
+import { CommuteIcon } from "@/components/commute-icon";
 
 export function CommuteLogList({
   logs,
@@ -44,10 +58,15 @@ export function CommuteLogList({
       <Card className="flex flex-col items-center justify-center text-center p-10 min-h-[400px]">
         <CardHeader>
           <div className="mx-auto bg-secondary p-3 rounded-full">
-            <CommuteIcon iconName="Car" className="h-8 w-8 text-muted-foreground" />
+            <CommuteIcon
+              iconName="Car"
+              className="h-8 w-8 text-muted-foreground"
+            />
           </div>
           <CardTitle className="mt-4">No Commute Logs Yet</CardTitle>
-          <CardDescription>Start by adding your first commute log to see it here.</CardDescription>
+          <CardDescription>
+            Start by adding your first commute log to see it here.
+          </CardDescription>
         </CardHeader>
       </Card>
     );
@@ -55,13 +74,16 @@ export function CommuteLogList({
 
   return (
     <>
-      <div className="space-y-4">
+      <div className="max-h-[780px] overflow-y-auto pr-2 space-y-4">
         {logs.map((log) => {
           const goingCommuteType = getType(log.goingCommuteTypeId);
           const returnCommuteType = getType(log.returnCommuteTypeId);
 
           return (
-            <Card key={log.id} className="overflow-hidden transition-shadow duration-300 ease-in-out hover:shadow-xl">
+            <Card
+              key={log.id}
+              className="overflow-hidden transition-shadow duration-300 ease-in-out hover:shadow-xl"
+            >
               <CardContent className="p-4 grid gap-4">
                 <div className="flex justify-between items-start">
                   <div className="flex-1 overflow-hidden">
@@ -69,28 +91,42 @@ export function CommuteLogList({
                       <Calendar className="mr-2 h-4 w-4 flex-shrink-0" />
                       <span className="truncate">
                         {new Date(log.date).toLocaleDateString(undefined, {
-                          weekday: 'long',
-                          year: 'numeric',
-                          month: 'long',
-                          day: 'numeric',
+                          weekday: "long",
+                          year: "numeric",
+                          month: "long",
+                          day: "numeric",
                         })}
                       </span>
                     </div>
                     <div className="font-bold text-base md:text-lg mt-2 flex items-center flex-wrap gap-2">
                       <div className="flex items-center gap-2">
-                        <CommuteIcon iconName={goingCommuteType?.icon || 'HelpCircle'} className="h-5 w-5" />
-                        <span className="truncate">{goingCommuteType?.name || 'Unknown'}</span>
+                        <CommuteIcon
+                          iconName={goingCommuteType?.icon || "HelpCircle"}
+                          className="h-5 w-5"
+                        />
+                        <span className="truncate">
+                          {goingCommuteType?.name || "Unknown"}
+                        </span>
                       </div>
                       <ArrowRight className="h-4 w-4 text-muted-foreground flex-shrink-0" />
                       <div className="flex items-center gap-2">
-                        <CommuteIcon iconName={returnCommuteType?.icon || 'HelpCircle'} className="h-5 w-5" />
-                        <span className="truncate">{returnCommuteType?.name || 'Unknown'}</span>
+                        <CommuteIcon
+                          iconName={returnCommuteType?.icon || "HelpCircle"}
+                          className="h-5 w-5"
+                        />
+                        <span className="truncate">
+                          {returnCommuteType?.name || "Unknown"}
+                        </span>
                       </div>
                     </div>
                   </div>
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                      <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground flex-shrink-0 ml-2">
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-8 w-8 text-muted-foreground flex-shrink-0 ml-2"
+                      >
                         <MoreHorizontal className="h-4 w-4" />
                       </Button>
                     </DropdownMenuTrigger>
@@ -137,12 +173,16 @@ export function CommuteLogList({
         })}
       </div>
 
-      <AlertDialog open={!!logToDelete} onOpenChange={(open) => !open && setLogToDelete(null)}>
+      <AlertDialog
+        open={!!logToDelete}
+        onOpenChange={(open) => !open && setLogToDelete(null)}
+      >
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>Are you sure?</AlertDialogTitle>
             <AlertDialogDescription>
-              This action cannot be undone. This will permanently delete this commute log.
+              This action cannot be undone. This will permanently delete this
+              commute log.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
